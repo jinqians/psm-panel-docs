@@ -24,7 +24,36 @@
 
 **独立安装**使用官方的 snell-server 或 shadowsocks-rust，作为单独的服务运行，每台服务器各一个。Snell v6 在上游仍是测试版，面板装它最新的测试版或候选版。官方 snell-server 不能在 Alpine（musl）上运行，Alpine 服务器请用 sing-box 或 mihomo 运行 Snell。
 
-需要证书的协议（Hysteria2、TUIC、AnyTLS、VLESS + TLS 等）要填证书和私钥在服务器上的路径；证书可以用 PSM 菜单的"SSL 证书管理"签发。
+## 证书
+
+用 sing-box 或 mihomo 运行的 TLS 协议（Hysteria2、TUIC、AnyTLS、VLESS + TLS、Trojan、VMess），以及 Xray 的 Hysteria2，**证书可以什么都不填**：
+
+- 填了"证书域名（SNI）"，服务器上又有这个域名的证书（`/etc/nginx/ssl/<域名>/`，PSM 菜单"SSL 证书管理"签发的就在这里），就用它；
+- 否则 PSM 自动签一张自签证书（SNI 留空时用 `www.bing.com`），节点的链接和订阅会告诉客户端跳过证书校验，导入就能连。
+- 证书在别处时，填"证书文件"和"私钥文件"的路径；那是自签证书的话，勾上"证书不受信任"。
+
+Xray 的 Vision、XHTTP（TLS 模式）、Trojan、VMess 要用真实域名和它的证书：先在服务器上用 PSM 菜单签发。没有证书时面板上的节点显示"失败"并说明原因，不会影响同一台服务器上的其他 Xray 节点。没有域名就用 REALITY，或者用 sing-box / mihomo 运行。
+
+## 出口分流（WARP / 免费家宽）
+
+Xray、sing-box、mihomo 运行的节点可以在"出口分流"里选：
+
+- **Cloudflare WARP**：服务器第一次用时自动注册一个免费 WARP 身份；
+- **免费家宽（VPNGate）**：服务器连一条志愿者提供的家庭宽带线路（"家宽国家"里选国家，默认日本），断线时自动换一条；每台服务器一条，已经有了就继续用。
+
+"分流范围"决定这个节点的哪些流量走出口：**AI**（ChatGPT、Claude、Gemini）、**流媒体**（Netflix、Disney+、HBO、Prime Video、Spotify）、两者都要、这个节点的**全部流量**，或者自己填 geosite 名称。其余流量照常从服务器直连。只影响这一个节点，同一台服务器上的其他节点不受影响；删除节点或改成"不分流"时，规则一起删掉。
+
+家宽线路是志愿者的家用网络，速度和在线时间不保证；从机房连不上时节点会显示"失败"并说明原因，换个国家或稍后再试。
+
+## 自动选择伪装目标（REALITY）
+
+先在 **系统设置** 里填好网络测绘引擎（Netlas、Quake、ZoomEye 或 FOFA）的 API Key。新建 REALITY 节点、选好已接入的服务器后，点 **自动选择伪装目标**：那台服务器用引擎查同一个 ASN（同一张网）里有证书的网站，逐个做 TLS 握手检查（TLS 1.3、X25519、h2），列出可用的伪装域名、目标和延迟，点 **使用** 填入。API Key 只在查询时发给那台服务器，不保存在服务器上。
+
+## 防火墙
+
+服务器开着防火墙（ufw、firewalld，或默认拒绝的 iptables）时，节点建好会自动放行它的端口（Hysteria2、TUIC、WireGuard 放行 UDP，Shadowsocks、Snell 放行 TCP 和 UDP），删除节点时再关掉。原本就放行的端口保持原样。
+
+云服务商的**安全组**（阿里云、腾讯云、AWS、Oracle 等在控制台里设置的那层）在服务器外面，PSM 改不了：用了安全组的话，要在控制台放行节点端口。
 
 ## 修改节点
 

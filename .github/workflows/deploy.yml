@@ -25,7 +25,11 @@ jobs:
         with:
           node-version: 22
       - run: npm install --no-audit --no-fund
+      # GitHub Pages serves this site under /psm-panel-docs/ (Cloudflare Pages at /)
       - run: npm run docs:build
+        env:
+          DOCS_BASE: /psm-panel-docs/
+          DOCS_HOST: https://jinqians.github.io
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

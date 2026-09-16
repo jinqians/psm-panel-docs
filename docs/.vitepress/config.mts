@@ -1,16 +1,21 @@
 import { defineConfig } from 'vitepress'
 
-// PSM Panel 的部署与使用文档，发布在 GitHub Pages 的项目地址下。
+// PSM Panel 的部署与使用文档。默认按站点根目录构建（Cloudflare Pages，
+// 如 psm-panel-docs.pages.dev）；GitHub Pages 的项目地址在子路径下，由它的
+// 工作流设 DOCS_BASE=/psm-panel-docs/。DOCS_HOST 是 sitemap 用的站点地址。
+const base = process.env.DOCS_BASE || '/'
+const host = process.env.DOCS_HOST || 'https://psm-panel-docs.pages.dev'
+
 export default defineConfig({
   lang: 'zh-CN',
   title: 'PSM Panel',
   description: 'PSM Panel：部署在 Cloudflare 上的 PSM 多服务器管理面板——一键部署、一条命令接入 VPS、节点、流量和汇总订阅。',
-  base: '/psm-panel-docs/',
+  base,
   cleanUrls: true,
   lastUpdated: true,
-  sitemap: { hostname: 'https://jinqians.github.io/psm-panel-docs/' },
+  sitemap: { hostname: host + base },
   head: [
-    ['link', { rel: 'icon', type: 'image/svg+xml', href: '/psm-panel-docs/favicon.svg' }],
+    ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }],
     ['meta', { name: 'theme-color', content: '#0f172a' }],
   ],
   themeConfig: {

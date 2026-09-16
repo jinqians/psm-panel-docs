@@ -20,12 +20,34 @@
 | 格式 | 地址 | 适用客户端 |
 | --- | --- | --- |
 | 通用 | 订阅地址本身 | v2rayN、Shadowrocket、Hiddify、NekoBox 等（base64 链接列表） |
-| Clash / mihomo | `?format=clash` | Clash Verge、Mihomo Party、Stash |
-| sing-box | `?format=singbox` | sing-box 官方客户端（SFA / SFI / SFM） |
-| Surge | `?format=surge` | Surge（Snell 节点） |
+| Clash / mihomo | `?format=clash` | Clash Verge、Mihomo Party、ClashX Meta |
+| Stash | `?format=stash` | Stash |
+| sing-box | `?format=singbox` | sing-box 官方客户端（SFA / SFI / SFM），1.12 及以上 |
+| Surge | `?format=surge` | Surge |
+| Quantumult X | `?format=quanx` | Quantumult X |
+| Loon | `?format=loon` | Loon |
 
-- Clash / mihomo 的配置通过 proxy-provider 引用这个订阅的通用格式，由 mihomo 自己解析链接，协议字段不会走样；带"自动选择"组。
-- sing-box 的配置包含每个节点的 outbound、"自动选择"（urltest）和本地 `127.0.0.1:7890` 混合代理入口。
+除了"通用"，其余格式都是一份完整的客户端配置，由**订阅模板**加上节点生成。每个客户端只会拿到它支持的协议：Surge 没有 VLESS；Quantumult X 没有 Hysteria2、TUIC、Snell；Loon 没有 TUIC、Snell；Stash 没有 AnyTLS。
+
+- TLS 协议的节点（Hysteria2、TUIC、AnyTLS、VLESS + TLS、Trojan、VMess）按服务器导出的完整参数写出，包括自签证书时的"跳过证书校验"。
+- Clash / mihomo 的内置模板另外用 proxy-provider 引用这个订阅的通用格式，补上 mihomo 能从链接导入的其余节点。
+
+## 订阅模板
+
+内置模板带一套基础分流：广告拦截、AI（OpenAI、Claude、Gemini）和流媒体（Netflix、Disney+、YouTube）各一个可选的策略组、国内直连，其余走 PSM 组（手选或自动选择）。规则列表来自 blackmatrix7/ios_rule_script（Surge、Quantumult X、Loon、Stash）、SagerNet 的 sing-geosite（sing-box）和 mihomo 自带的 GeoSite。
+
+要改规则，在 **订阅** 页下方 **订阅模板** 点 **新建模板**：选格式，内容会先填成内置模板，改好保存；然后在订阅卡片里每种格式旁的下拉框选用它。模板里可以用这些占位符：
+
+| 占位符 | 替换成 |
+| --- | --- |
+| `{{proxies}}` | 节点定义，每行一个，缩进和占位符那一行一样（必须单独占一行） |
+| `{{names}}` | 节点名，每个后面带 `, `，放在策略组固定成员前面，如 `PSM = select, {{names}}DIRECT` |
+| `{{names_list}}` | 节点名，用 `, ` 连接，最后不带逗号（如 url-test 组） |
+| `{{sub_url}}` | 这个订阅在这种格式下的地址（Surge 的 `#!MANAGED-CONFIG`） |
+| `{{name}}` | 订阅名称 |
+| `{{provider_url}}`、`{{provider_exclude}}` | Clash：通用格式地址，和排除已写出节点的过滤器 |
+
+删除模板后，用它的订阅自动改回内置模板。
 - 响应带 `subscription-userinfo`，客户端能显示已用流量（所有节点都设了上限时也显示总量）。
 
 ## 重置和删除
