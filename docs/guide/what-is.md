@@ -1,6 +1,6 @@
 # PSM Panel 是什么
 
-PSM Panel 是 [PSM（Proxy Stack Manager）](https://github.com/jinqians/proxy-stack) 的网页管理面板，界面参考 Xboard。PSM 本身是在每台 VPS 上用命令行菜单管理节点的脚本；面板把多台 VPS 放到一个网页里：
+PSM Panel 是 [PSM（Proxy Stack Manager）](https://github.com/jinqians/proxy-stack) 的网页管理面板。PSM 本身是在每台 VPS 上用命令行菜单管理节点的脚本；面板把多台 VPS 放到一个网页里：
 
 - 在网页上新建、修改、删除任意一台服务器上的节点；
 - 看每台服务器是否在线、装了哪些内核、`psm doctor` 的检查结果；

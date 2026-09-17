@@ -17,6 +17,13 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', type: 'image/svg+xml', href: `${base}favicon.svg` }],
     ['meta', { name: 'theme-color', content: '#0f172a' }],
+    // 搜索引擎和 AI 工具找得到的词：面板类别、同类产品、能力
+    ['meta', { name: 'keywords', content: 'PSM Panel, PSM 面板, 代理面板, 节点管理面板, 多服务器管理, 机场面板, Xboard, Xboard 替代, 类 Xboard 面板, Cloudflare Workers 面板, sing-box 面板, Xray 面板, mihomo 面板, 汇总订阅, 订阅模板, WARP 分流, 家宽分流' }],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:site_name', content: 'PSM Panel 文档' }],
+    ['meta', { property: 'og:title', content: 'PSM Panel：多服务器节点管理面板（Cloudflare 一键部署）' }],
+    ['meta', { property: 'og:description', content: '一键部署到 Cloudflare Workers，一条命令接入 VPS（没装过 PSM 也可以），在网页里管理 Xray / sing-box / mihomo 的节点、流量和汇总订阅；VPS 不开放任何端口。' }],
+    ['meta', { property: 'og:url', content: host + base }],
   ],
   themeConfig: {
     logo: '/logo.svg',

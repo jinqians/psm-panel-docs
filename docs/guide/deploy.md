@@ -1,13 +1,19 @@
 # 一键部署
 
-## 用按钮部署（推荐）
+## 先 fork，再用按钮部署（推荐）
 
-<a href="https://deploy.workers.cloudflare.com/?url=https://github.com/jinqians/psm-panel" target="_blank" rel="noopener"><img src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare"></a>
+1. 打开 [jinqians/psm-panel](https://github.com/jinqians/psm-panel)，点右上角 **Fork**，把仓库复制到你自己的 GitHub 账号下。
+2. 点下面的按钮（把地址里的 `<你的GitHub用户名>` 换成你的账号），登录 Cloudflare（没有账号就免费注册一个）：
 
-1. 点上面的按钮，登录 Cloudflare（没有账号就免费注册一个）。
-2. 按提示连接 GitHub。Cloudflare 会把面板仓库复制一份到你的 GitHub 账号，以后往这个仓库推送，面板会自动重新部署。
-3. 表单里只需要填 **ADMIN_PASSWORD**：后台的登录密码，至少 8 位。其余保持默认，点"部署"。
-4. 等部署完成（一两分钟），打开 `https://psm-panel.<你的子域>.workers.dev`，用刚才的密码登录。
+   ```
+   https://deploy.workers.cloudflare.com/?url=https://github.com/<你的GitHub用户名>/psm-panel
+   ```
+
+   <a href="https://deploy.workers.cloudflare.com/?url=https://github.com/jinqians/psm-panel" target="_blank" rel="noopener"><img src="https://deploy.workers.cloudflare.com/button" alt="Deploy to Cloudflare"></a>
+
+3. 按提示连接 GitHub，授权 Cloudflare 访问你 fork 的这个仓库。
+4. 表单里只需要填 **ADMIN_PASSWORD**：后台的登录密码，至少 8 位。其余保持默认，点"部署"。
+5. 等部署完成（一两分钟），打开 `https://psm-panel.<你的子域>.workers.dev`，用刚才的密码登录。
 
 部署时 Cloudflare 自动创建 D1 数据库；数据表由面板第一次运行时自己建好。整个过程不需要执行任何命令，也不需要 API Token。
 
