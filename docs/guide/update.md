@@ -19,4 +19,6 @@
 ## 更新服务器上的 PSM 和 psm-agent
 
 - PSM 照常更新：`psm` 菜单里的更新，或再执行一次 `bash <(curl -fsSL https://psm.jinqians.com)`。
-- psm-agent：在服务器页为这台服务器生成新的安装命令并执行一次，会下载新版本的 psm-agent 并重新接入（节点不受影响）。
+- psm-agent：在服务器页点这台服务器的 **升级 agent**——Agent 列标着"可升级"时出现。它会让服务器自己更新 PSM 并换上新版 psm-agent，节点、中转和流量统计都不受影响。见 [服务器和诊断 · 升级 psm-agent](./servers#升级-psm-agent)。
+- 服务器离线、或者想手工处理时：生成新的安装命令执行一次，或在服务器上执行 `psm agent upgrade`。
+- **0.9.0 及更早的 psm-agent 还不认识"升级"这个任务**，按钮对它们无效：这些服务器先用上面的手工办法升到 0.10.0，之后就能在面板上点按钮了。
