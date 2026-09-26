@@ -29,10 +29,20 @@
 用 sing-box 或 mihomo 运行的 TLS 协议（Hysteria2、TUIC、AnyTLS、VLESS + TLS、Trojan、VMess），以及 Xray 的 Hysteria2，**证书可以什么都不填**：
 
 - 填了"证书域名（SNI）"，服务器上又有这个域名的证书（`/etc/nginx/ssl/<域名>/`，PSM 菜单"SSL 证书管理"签发的就在这里），就用它；
-- 否则 PSM 自动签一张自签证书（SNI 留空时用 `www.bing.com`），节点的链接和订阅会告诉客户端跳过证书校验，导入就能连。
+- 否则 PSM 自动签一张自签证书（SNI 留空时用 `www.bing.com`），节点的链接和订阅带上这张证书的指纹，导入就能连：v2rayN 等 Xray 内核的客户端、mihomo、sing-box、Surge、Quantumult X、Loon、Stash 都**校验这一张证书**（证书固定），不认指纹的客户端照旧跳过校验。Xray 从 2026-06-01 起拒绝"跳过证书校验"（allowInsecure），只给跳过标记的链接在 v2rayN 里连不上。
 - 证书在别处时，填"证书文件"和"私钥文件"的路径；那是自签证书的话，勾上"证书不受信任"。
 
 Xray 的 Vision、XHTTP（TLS 模式）、Trojan、VMess 要用真实域名和它的证书：先在服务器上用 PSM 菜单签发。没有证书时面板上的节点显示"失败"并说明原因，不会影响同一台服务器上的其他 Xray 节点。没有域名就用 REALITY，或者用 sing-box / mihomo 运行。
+
+## VLESS Encryption（后量子加密）
+
+Xray 的 REALITY、Vision、XHTTP 和 mihomo 的 VLESS + TLS 可以在"VLESS Encryption"里选 X25519 或 ML-KEM-768，再加一层抗量子加密。客户端要 Xray v25.9+ 或 mihomo 1.19.13+；sing-box、Surge、Quantumult X、Loon 用不了开启后的节点，它们的订阅里不会有它。X25519 的链接短；ML-KEM-768 全程抗量子，但链接约 1.6 KB。
+
+Xray 的 **mKCP** 默认开启（X25519）：mKCP 不套 TLS，而 Xray v26.7.7 起的客户端拒绝向公网地址发送不加密的 VLESS。只给旧版客户端用时选"不开启"。
+
+## Hysteria2 的 BBR 配置档
+
+用 sing-box 或 mihomo 运行的 Hysteria2 可以选"BBR 拥塞配置档"：服务器向客户端发数据时 BBR 有多激进（不限速时生效）。默认 standard；丢包较高的跨境线路可以试 **aggressive**，带宽多人共享或线路本身拥堵时选 **conservative**。需要 sing-box 1.14+ 或 mihomo 1.19.24+，面板安装的就是新版。
 
 ## 出口分流（WARP / 免费家宽）
 

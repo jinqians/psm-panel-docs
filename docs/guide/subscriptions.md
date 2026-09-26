@@ -22,15 +22,15 @@
 | 通用 | 订阅地址本身 | v2rayN、Shadowrocket、Hiddify、NekoBox 等（base64 链接列表） |
 | Clash / mihomo | `?format=clash` | Clash Verge、Mihomo Party、ClashX Meta |
 | Stash | `?format=stash` | Stash |
-| sing-box | `?format=singbox` | sing-box 官方客户端（SFA / SFI / SFM），1.12 及以上 |
+| sing-box | `?format=singbox` | sing-box 官方客户端（SFA / SFI / SFM），1.14 及以上（规则集用 1.14 的 `http_client`，自签证书节点用 1.13 起的公钥固定） |
 | Surge | `?format=surge` | Surge |
 | Quantumult X | `?format=quanx` | Quantumult X |
 | Loon | `?format=loon` | Loon |
 
 除了"通用"，其余格式都是一份完整的客户端配置，由**订阅模板**加上节点生成。每个客户端只会拿到它支持的协议：Surge 没有 VLESS；Quantumult X 没有 Hysteria2、TUIC、Snell；Loon 没有 TUIC、Snell；Stash 没有 AnyTLS。
 
-- TLS 协议的节点（Hysteria2、TUIC、AnyTLS、VLESS + TLS、Trojan、VMess）按服务器导出的完整参数写出，包括自签证书时的"跳过证书校验"。
-- Clash / mihomo 的内置模板不把节点写进配置，而是用 proxy-provider 直接引用这个订阅（通用格式）：节点只有这一个来源，面板里增删节点后客户端最多一小时自己同步，不必重新导入订阅。代价是首次启动时如果拉不到订阅（断网、面板不可达），配置里就没有节点。
+- TLS 协议的节点（Hysteria2、TUIC、AnyTLS、VLESS + TLS、Trojan、VMess）按服务器导出的完整参数写出。自签证书的节点带着证书指纹，客户端校验这一张证书：通用格式的链接里是 `pcs` / `pinSHA256`（v2rayN 等 Xray 内核的客户端靠它连接自签节点），Clash 里是 `fingerprint`，sing-box 里是 `certificate_public_key_sha256`，Stash 是 `server-cert-fingerprint`，Surge 是 `server-cert-fingerprint-sha256`，Quantumult X 和 Loon 是 `tls-cert-sha256`。
+- Clash / mihomo 的内置模板不把节点写进配置，而是用 proxy-provider 引用这个订阅的 `?format=provider`——面板把每个节点写成完整的 mihomo 节点（不是分享链接：mihomo 从链接导入时读不到自签 VMess、TUIC 的证书，也不认 HTTPUpgrade）。节点只有这一个来源，面板里增删节点后客户端最多一小时自己同步，不必重新导入订阅。代价是首次启动时如果拉不到订阅（断网、面板不可达），配置里就没有节点。
 
 ## 订阅模板
 
@@ -40,7 +40,7 @@
 
 | 占位符 | 替换成 |
 | --- | --- |
-| `{{proxies}}` | 节点定义，每行一个，缩进和占位符那一行一样（必须单独占一行）。用了 `{{provider_url}}` 的 Clash 模板可以不写它——内置的 Clash 模板就是这样，节点全部来自 provider |
+| `{{proxies}}` | 节点定义，每行一个，缩进和占位符那一行一样（必须单独占一行）。用了 `{{provider_url}}` 的 Clash 模板可以不写它——内置的 Clash 模板就是这样，节点全部来自 provider（`?format=provider`，mihomo 节点列表） |
 | `{{names}}` | 节点名，每个后面带 `, `，放在策略组固定成员前面，如 `PSM = select, {{names}}DIRECT` |
 | `{{names_list}}` | 节点名，用 `, ` 连接，最后不带逗号（如 url-test 组） |
 | `{{sub_url}}` | 这个订阅在这种格式下的地址（Surge 的 `#!MANAGED-CONFIG`） |
