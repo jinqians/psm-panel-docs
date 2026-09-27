@@ -48,6 +48,7 @@ export default defineConfig({
           text: '使用',
           items: [
             { text: '节点', link: '/guide/nodes' },
+            { text: '中转', link: '/guide/relays' },
             { text: '流量和限额', link: '/guide/traffic' },
             { text: '订阅', link: '/guide/subscriptions' },
             { text: '服务器和诊断', link: '/guide/servers' },
