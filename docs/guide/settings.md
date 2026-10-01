@@ -29,6 +29,22 @@
 
 新建 REALITY 节点时"自动选择伪装目标"用的引擎和 API Key：Netlas、Quake（360）、ZoomEye 或 FOFA。Key 加密存放，页面上不再显示；**面板自己用它查询，不会发给服务器**——服务器只收到查到的候选网站，去做 TLS 握手检查。Netlas 有免费额度：在 app.netlas.io 注册后，从个人资料页复制 API Key。见 [节点 · 自动选择伪装目标](./nodes#自动选择伪装目标reality)。
 
+## IP 质量检测的数据库
+
+服务器页 **IP 质量与解锁** 不填任何 Key 也能用。填了这几家的免费 API Key，结果里会多它们的风险分和风险因子：
+
+| 数据库 | 提供 | 免费额度 |
+| --- | --- | --- |
+| [AbuseIPDB](https://www.abuseipdb.com/account/api) | 滥用置信度、使用类型、Tor | 每天 1,000 次 |
+| [IPQualityScore](https://www.ipqualityscore.com/create-account) | 欺诈分、代理、VPN、Tor、近期滥用、机器人、连接类型 | 每月 5,000 次 |
+| [IP2Location.io](https://www.ip2location.io/sign-up) | 不填每天 1,000 次；填了额度更高，付费套餐还有使用类型和代理细项 | 每月 50,000 次 |
+
+Key 的保存和使用：
+
+- 加密存在 D1 里，页面上不再显示，只标"已保存"。
+- 检测时随任务交给服务器，在服务器上经标准输入交给 `psm check`，不出现在任何命令行里。
+- 点 **清除** 删掉某一家的 Key。
+
 ## 登录
 
 登录保持 7 天。**退出登录**（左下角，或这里的 **退出所有设备**）会让所有设备上的登录一起失效；修改 `ADMIN_PASSWORD` 也一样。管理员密码在 Cloudflare 控制台修改 Worker **机密** `ADMIN_PASSWORD`（不要用变量，变量每次部署都会被清掉）。面板第一次读到机密时会把它的加盐哈希存进 D1，所以重新部署即使机密没了也仍能登录。
