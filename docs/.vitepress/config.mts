@@ -52,7 +52,8 @@ export default defineConfig({
             { text: '流量和限额', link: '/guide/traffic' },
             { text: '订阅', link: '/guide/subscriptions' },
             { text: '服务器和诊断', link: '/guide/servers' },
-            { text: '系统设置和操作记录', link: '/guide/settings' },
+            { text: '操作日志', link: '/guide/audit' },
+            { text: '系统设置', link: '/guide/settings' },
           ],
         },
         {
