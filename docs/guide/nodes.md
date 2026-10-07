@@ -48,6 +48,10 @@ Xray 的 **mKCP** 默认开启（X25519）：mKCP 不套 TLS，而 Xray v26.7.7 
 
 用 sing-box 或 mihomo 运行的 Hysteria2 可以选"BBR 拥塞配置档"：服务器向客户端发数据时 BBR 有多激进（不限速时生效）。默认 standard；丢包较高的跨境线路可以试 **aggressive**，带宽多人共享或线路本身拥堵时选 **conservative**。需要 sing-box 1.14+ 或 mihomo 1.19.24+，面板安装的就是新版。
 
+
+## Hysteria2 关闭 MTU 探测
+
+用 sing-box 或 Xray 运行的 Hysteria2 有"关闭 MTU 探测"开关（3x-ui 的 Disable Path MTU Discovery）：服务器不再试探更大的包，一直用较小的包发送。对容易丢大包、网络较差的线路有用，客户端不用改；默认不开。sing-box 要 1.14+（面板安装的就是新版），mihomo 没有这个选项。服务器上的 PSM 要是 2026-10-07 之后的版本：太旧时保存会提示先在服务器页的 ⋯ 里点「升级 agent」（会先更新 PSM）。
 ## 出口分流（WARP / 免费家宽）
 
 Xray、sing-box、mihomo 运行的节点可以在"出口分流"里选：
