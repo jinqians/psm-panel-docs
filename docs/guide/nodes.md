@@ -21,26 +21,34 @@
 | --- | --- | --- |
 | Snell | 独立安装（snell-server v4 / v5 / v6）、sing-box（v5 / v6）、mihomo（v4 / v5） | 独立安装 |
 | Shadowsocks 2022 | 独立安装（ss-rust）、Xray、sing-box、mihomo | 独立安装 |
-| VLESS REALITY、Hysteria2、Trojan、VMess、SOCKS | Xray、sing-box、mihomo | Xray（Hysteria2 默认 sing-box） |
-| VLESS Vision、XHTTP | Xray | Xray |
-| VLESS + TLS、TUIC、AnyTLS | sing-box、mihomo | sing-box |
+| VLESS（REALITY、Vision、TLS + 传输）、Hysteria2、Trojan、VMess、SOCKS | Xray、sing-box、mihomo | Xray（Hysteria2 默认 sing-box） |
+| VLESS（REALITY + XHTTP / gRPC、mKCP） | Xray | Xray |
+| TUIC、AnyTLS | sing-box、mihomo | sing-box |
 | WireGuard | sing-box | sing-box |
+
+VLESS 每种只有一个入口，内核在入口里选：
+
+- **Vision（TCP + TLS）**：VLESS 的 Vision 流控（xtls-rprx-vision），三个内核都支持。sing-box 和 mihomo 没有证书时 PSM 签一张自签证书，不需要自己的域名。
+- **TLS + 传输**：WebSocket 和 gRPC 三个内核都有；HTTPUpgrade 有 Xray 和 sing-box，XHTTP 有 Xray 和 mihomo，HTTP/2 只有 Xray。换内核时，"传输方式"只列这个内核有的。
+- **REALITY + XHTTP / gRPC** 和 **mKCP** 是 Xray 独有的。
+
+面板 0.10.2 之前，VLESS 的入口按各内核的叫法分（Xray 的"XHTTP"、sing-box 和 mihomo 的"TLS"），同一种节点可能在两个入口下。升级后，已有的节点自动归到对应的入口，只改面板的记录，服务器上的节点和链接都不变。
 
 **独立安装**使用官方的 snell-server 或 shadowsocks-rust，作为单独的服务运行，每台服务器各一个。Snell v6 在上游仍是测试版，面板装它最新的测试版或候选版。官方 snell-server 不能在 Alpine（musl）上运行，Alpine 服务器请用 sing-box 或 mihomo 运行 Snell。
 
 ## 证书
 
-用 sing-box 或 mihomo 运行的 TLS 协议（Hysteria2、TUIC、AnyTLS、VLESS + TLS、Trojan、VMess），以及 Xray 的 Hysteria2，**证书可以什么都不填**：
+用 sing-box 或 mihomo 运行的 TLS 协议（Hysteria2、TUIC、AnyTLS、VLESS Vision 和 TLS + 传输、Trojan、VMess），以及 Xray 的 Hysteria2，**证书可以什么都不填**：
 
 - 填了"证书域名（SNI）"，服务器上又有这个域名的证书（`/etc/nginx/ssl/<域名>/`，PSM 菜单"SSL 证书管理"签发的就在这里），就用它；
 - 否则 PSM 自动签一张自签证书（SNI 留空时用 `www.bing.com`），节点的链接和订阅带上这张证书的指纹，导入就能连：v2rayN 等 Xray 内核的客户端、mihomo、sing-box、Surge、Quantumult X、Loon、Stash 都**校验这一张证书**（证书固定），不认指纹的客户端照旧跳过校验。Xray 从 2026-06-01 起拒绝"跳过证书校验"（allowInsecure），只给跳过标记的链接在 v2rayN 里连不上。
 - 证书在别处时，填"证书文件"和"私钥文件"的路径；那是自签证书的话，勾上"证书不受信任"。
 
-Xray 的 Vision、XHTTP（TLS 模式）、Trojan、VMess 要用真实域名和它的证书：先在服务器上用 PSM 菜单签发。没有证书时面板上的节点显示"失败"并说明原因，不会影响同一台服务器上的其他 Xray 节点。没有域名就用 REALITY，或者用 sing-box / mihomo 运行。
+Xray 的 Vision、TLS + 传输、Trojan、VMess 要用真实域名和它的证书：先在服务器上用 PSM 菜单签发。没有证书时面板上的节点显示"失败"并说明原因，不会影响同一台服务器上的其他 Xray 节点。没有域名就用 REALITY，或者用 sing-box / mihomo 运行。
 
 ## VLESS Encryption（后量子加密）
 
-Xray 的 REALITY、Vision、XHTTP 和 mihomo 的 VLESS + TLS 可以在"VLESS Encryption"里选 X25519 或 ML-KEM-768，再加一层抗量子加密。客户端要 Xray v25.9+ 或 mihomo 1.19.13+；sing-box、Surge、Quantumult X、Loon 用不了开启后的节点，它们的订阅里不会有它。X25519 的链接短；ML-KEM-768 全程抗量子，但链接约 1.6 KB。
+Xray 的 VLESS（REALITY、Vision、TLS + 传输、REALITY + XHTTP / gRPC）和 mihomo 的 Vision、TLS + 传输可以在"VLESS Encryption"里选 X25519 或 ML-KEM-768，再加一层抗量子加密。客户端要 Xray v25.9+ 或 mihomo 1.19.13+；sing-box、Surge、Quantumult X、Loon 用不了开启后的节点，它们的订阅里不会有它。X25519 的链接短；ML-KEM-768 全程抗量子，但链接约 1.6 KB。
 
 Xray 的 **mKCP** 默认开启（X25519）：mKCP 不套 TLS，而 Xray v26.7.7 起的客户端拒绝向公网地址发送不加密的 VLESS。只给旧版客户端用时选"不开启"。
 
