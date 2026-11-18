@@ -29,7 +29,7 @@
 | Quantumult X | `?format=quanx` | Quantumult X |
 | Loon | `?format=loon` | Loon |
 
-除了"通用"，其余格式都是一份完整的客户端配置，由**订阅模板**加上节点生成。每个客户端只会拿到它支持的协议：Surge 没有 VLESS；Quantumult X 没有 Hysteria2、TUIC、Snell；Loon 没有 TUIC、Snell；Stash 没有 AnyTLS。**Snell 节点只出现在 Surge 订阅里**：它没有分享链接，其他客户端也不支持它，所以通用、Clash、sing-box 等格式里看不到 Snell 是正常的。
+除了"通用"，其余格式都是一份完整的客户端配置，由**订阅模板**加上节点生成。每个客户端只会拿到它支持的协议：Surge 没有 VLESS；Quantumult X 没有 Hysteria2、TUIC、Snell；Loon 没有 TUIC、Snell；Stash 没有 AnyTLS。**Snell 节点只出现在 Surge 订阅里**：它没有分享链接，其他客户端也不支持它，所以通用、Clash、sing-box 等格式里看不到 Snell 是正常的。**Xray 的 REALITY 节点不在 sing-box 订阅里**：Xray 从 v26.9.8 起只接受带后量子密钥（X25519MLKEM768）的 REALITY 握手，sing-box 会把它去掉，怎么配都连不上；给 sing-box 客户端用的 REALITY 节点请用 sing-box 或 mihomo 运行。Clash / mihomo 订阅里的 Xray REALITY 节点带着 `support-x25519mlkem768: true`，mihomo 靠它才能连上。
 
 - TLS 协议的节点（Hysteria2、TUIC、AnyTLS、VLESS Vision 和 TLS + 传输、Trojan、VMess）按服务器导出的完整参数写出。自签证书的节点带着证书指纹，客户端校验这一张证书：通用格式的链接里是 `pcs` / `pinSHA256`（v2rayN 等 Xray 内核的客户端靠它连接自签节点），Clash 里是 `fingerprint`，sing-box 里是 `certificate_public_key_sha256`，Stash 是 `server-cert-fingerprint`，Surge 是 `server-cert-fingerprint-sha256`，Quantumult X 和 Loon 是 `tls-cert-sha256`。
 - Clash / mihomo 的内置模板不把节点写进配置，而是用 proxy-provider 引用这个订阅的 `?format=provider`——面板把每个节点写成完整的 mihomo 节点（不是分享链接：mihomo 从链接导入时读不到自签 VMess、TUIC 的证书，也不认 HTTPUpgrade）。节点只有这一个来源，面板里增删节点后客户端最多一小时自己同步，不必重新导入订阅。代价是首次启动时如果拉不到订阅（断网、面板不可达），配置里就没有节点。
